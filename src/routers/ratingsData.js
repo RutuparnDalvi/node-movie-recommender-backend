@@ -1,5 +1,6 @@
 const express = require('express')
 const RatingsData = require('../models/ratingsData')
+const MoviesData = require('../models/moviesData')
 const UserIdCount = require('../models/userIdCount')
 const RecommendationList = require('../models/recommendationList')
 
@@ -79,7 +80,18 @@ router.get('/recommendations/:userId',async(req,res)=>{
 
         const {moviesReco} = recommendation
 
-        res.send({moviesReco})
+        const getMovies = ()=>{
+            const promises = moviesReco.map(async(movieId)=>{
+                const movie = await MoviesData.findOne({movieId})
+                return movie
+            })
+
+            return Promise.all(promises)
+        }
+
+        const movies = await getMovies()
+
+        res.send({movies})
     } catch (e) {
         res.status(500).send()
     }
