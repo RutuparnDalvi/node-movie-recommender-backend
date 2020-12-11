@@ -13,7 +13,7 @@ router.post('/ratings/:userId',async (req,res)=>{
 
     try{
         await ratingsData.save()
-        res.status(201).send(ratingsData)
+        res.status(201).send({_id:req.body._id,userId:ratingsData.userId,movieId:ratingsData.movieId,rating:ratingsData.rating,movie:req.body.movie})
     } catch (e) {
         res.status(400).send(e)
     }
@@ -31,7 +31,7 @@ router.patch('/ratings/:userId/:movieId',async (req,res)=>{
         if(!rating){
             return res.status(404).send()
         }
-        res.send(rating)
+        res.send({_id:req.body._id,userId:rating.userId,movieId:rating.movieId,rating:rating.rating,movie:req.body.movie})
     } catch (e) {
         res.status(400).send(e)
     }
@@ -71,7 +71,7 @@ router.get('/ratings/:userId',async(req,res)=>{
 
 // To fetch an ID for new user , which will be passed on in every other get/post request made by the user
 
-router.get('/user/count',async(req,res)=>{
+router.get('/user/count/new',async(req,res)=>{
     try {
         const userIdCount = await UserIdCount.findOne({})
 
@@ -81,6 +81,18 @@ router.get('/user/count',async(req,res)=>{
         await UserIdCount.findOneAndUpdate({},{userIdCount:++count})
 
         res.send({count: userIdCount.userIdCount})
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
+router.get('/user/count',async(req,res)=>{
+    try {
+        const userIdCount = await UserIdCount.findOne({})
+
+        let count = userIdCount.userIdCount
+
+        res.send({count})
     } catch (e) {
         res.status(500).send()
     }
