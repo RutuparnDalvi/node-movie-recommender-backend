@@ -20,6 +20,23 @@ router.post('/ratings/:userId',async (req,res)=>{
 
 })
 
+//Update a specific rating
+
+router.patch('/ratings/:userId/:movieId',async (req,res)=>{
+    const {userId,movieId} = req.params
+
+    try{
+        const rating = await RatingsData.findOneAndUpdate({movieId,userId},{rating:req.body.rating},{new:true})
+
+        if(!rating){
+            return res.status(404).send()
+        }
+        res.send(rating)
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
 router.get('/ratings/:userId',async(req,res)=>{
     const userId = req.params.userId
 
@@ -33,6 +50,7 @@ router.get('/ratings/:userId',async(req,res)=>{
                 return {
                     _id:rating._id,
                     userId:rating.userId,
+                    movieId:rating.movieId,
                     movie: rating.movie[0].title,
                     rating:rating.rating
                 }
