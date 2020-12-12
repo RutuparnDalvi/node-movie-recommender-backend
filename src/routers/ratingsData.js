@@ -9,11 +9,16 @@ const router = express.Router()
 router.post('/ratings/:userId',async (req,res)=>{
     const userId = req.params.userId
 
+    const rating = await RatingsData.findOne({movieId:req.body.movieId,userId})
+
+    if(rating){
+        return res.status(200).send()
+    }
     const ratingsData = new RatingsData({...req.body,userId})
 
     try{
         await ratingsData.save()
-        res.status(201).send({_id:req.body._id,userId:ratingsData.userId,movieId:ratingsData.movieId,rating:ratingsData.rating,movie:req.body.movie})
+        res.status(201).send({_id:ratingsData._id,userId:ratingsData.userId,movieId:ratingsData.movieId,rating:ratingsData.rating,movie:req.body.movie})
     } catch (e) {
         res.status(400).send(e)
     }
@@ -31,7 +36,7 @@ router.patch('/ratings/:userId',async (req,res)=>{
         if(!rating){
             return res.status(404).send()
         }
-        res.send({_id:req.body._id,userId:rating.userId,movieId:rating.movieId,rating:rating.rating,movie:req.body.movie})
+        res.send({_id:rating._id,userId:rating.userId,movieId:rating.movieId,rating:rating.rating,movie:req.body.movie})
     } catch (e) {
         res.status(400).send(e)
     }
