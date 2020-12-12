@@ -22,11 +22,11 @@ router.post('/ratings/:userId',async (req,res)=>{
 
 //Update a specific rating
 
-router.patch('/ratings/:userId/:movieId',async (req,res)=>{
-    const {userId,movieId} = req.params
+router.patch('/ratings/:userId',async (req,res)=>{
+    const {userId} = req.params
 
     try{
-        const rating = await RatingsData.findOneAndUpdate({movieId,userId},{rating:req.body.rating},{new:true})
+        const rating = await RatingsData.findOneAndUpdate({movieId:req.body.movieId,userId},{rating:req.body.rating},{new:true})
 
         if(!rating){
             return res.status(404).send()
